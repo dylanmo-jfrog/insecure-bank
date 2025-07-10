@@ -31,6 +31,7 @@ jobs:
       # Build the maven project and skip tests
       - name: Build with JFrog and Maven
         run: |
+          jf mvn-config
           jf rt mvn package -DskipTests
 
       # Use the JFrog "jf" command to collect information from 
