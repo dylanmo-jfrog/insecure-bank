@@ -54,5 +54,5 @@ jobs:
           # Publish build info
           jf rt bp
           # Xray Scan project
-          jf bs
+          jf scan
         
