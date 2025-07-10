@@ -1,0 +1,47 @@
+# Insecure Bank CI
+#
+name: "Insecure Bank CI"
+on: push
+
+# Setup environment with Ubuntu and Java 21
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin' 
+
+      # Setup the JFrog CLI to use with https://diamond.jfrog.io
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        with:
+          version: '2.77.0'
+        env:
+          JF_URL: ${{ vars.JF_URL }} 
+          # Basic authentication credentials
+          JF_USER: ${{ secrets.JF_USER }}
+          JF_PASSWORD: ${{ secrets.JF_PASSWORD }}
+          JF_PROJECT: "insecurebank"
+  
+      # Build the maven project and skip tests
+      - name: Build with JFrog and Maven
+        run: jf rt mvn package -DskipTests
+
+      # Use the JFrog "jf" command to collect information from 
+      # the build and publish to Artifactory
+      - name: Run JFrog CLI
+        run: | 
+          # Ping the server
+          jf rt ping
+          # Collect environmnt variables for the build
+          jf rt bce
+          # Collect VCS details from git and add them to the build
+          jf rt bag
+          # Publish build info
+          jf rt bp
+        
