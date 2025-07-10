@@ -3,6 +3,12 @@
 name: "Insecure Bank CI"
 on: push
 
+permissions:
+  id-token: write
+  contents: read
+  # Required for uploading code scanning.
+  security-events: write
+  
 # Setup environment with Ubuntu and Java 21
 jobs:
   build:
@@ -27,6 +33,7 @@ jobs:
           JF_USER: ${{ secrets.JF_USER }}
           JF_PASSWORD: ${{ secrets.JF_PASSWORD }}
           JF_PROJECT: "insecurebank"
+          JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
       # Build the maven project and skip tests
       - name: Build with JFrog and Maven
@@ -46,4 +53,6 @@ jobs:
           jf rt bag
           # Publish build info
           jf rt bp
+          # Xray Scan project
+          jf bs
         
