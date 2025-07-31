@@ -55,4 +55,5 @@ jobs:
           jf rt bp
           # Xray Scan project
           jf scan *.*
-        
+          # Advanced Security
+          jf audit --format=json > audit-results.json
